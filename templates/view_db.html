@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Contents</title>
+    <style>
+        img {
+            max-width: 300px;
+            max-height: 200px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Database Entries</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Text Content</th>
+                <th>Category</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td><img src="{{ url_for('uploads', filename=record[0]) }}" alt="Image"></td>
+                <td>{{ record[1] }}</td>
+                <td>{{ record[2] }}</td>
+                <td>{{ record[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

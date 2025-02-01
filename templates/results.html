@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body and Layout */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+            animation: fadeIn 2s;
+        }
+
+        h2 {
+            color: #555;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: #333;
+            width: 100%;
+            padding: 10px 0;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        nav a {
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-size: 18px;
+            margin: 0 15px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #575757;
+        }
+
+        /* Results List */
+        ul {
+            list-style: none;
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap; /* Allows images to wrap to the next line if needed */
+            justify-content: center; /* Centers the images */
+            gap: 15px; /* Adds space between images */
+        }
+
+        ul li {
+            text-align: center;
+            width: 200px; /* Keeps images within a fixed width */
+            margin-bottom: 15px;
+        }
+
+        ul li img {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            width: 100%; /* Makes the images fill their container */
+        }
+
+        ul li img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Back to Home Link */
+        a {
+            text-decoration: none;
+            color: #4CAF50;
+            font-size: 18px;
+            margin-top: 20px;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #45a049;
+        }
+
+        /* Animation Effects */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            nav {
+                text-align: left;
+                padding: 15px;
+            }
+
+            nav a {
+                margin: 0 10px;
+            }
+
+            ul li img {
+                max-width: 250px; /* Resize image on smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <a href="/">Back to Home</a>
+    </nav>
+
+    <h1>Search Results</h1>
+    <h2>Images containing the text:</h2>
+
+    <!-- Image Results List -->
+    <ul>
+        {% for image in images %}
+        <li>
+            <img src="{{ url_for('uploaded_file', filename=image) }}" alt="{{ image }}">
+        </li>
+        {% endfor %}
+    </ul>
+
+    <a href="/">Back to Home</a>
+
+</body>
+</html>

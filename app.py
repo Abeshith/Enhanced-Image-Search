@@ -2,6 +2,7 @@ import pytesseract
 from PIL import Image
 import os
 import sqlite3
+import cv2
 from flask import Flask, render_template, request, send_from_directory
 
 app = Flask(__name__)
@@ -23,10 +24,30 @@ def create_db():
     conn.commit()
     conn.close()
 
+def preprocess_image_opencv(img_path):
+    img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+    # Resize for better DPI (~300)
+    img = cv2.resize(img, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
+    # Median blur to remove salt-and-pepper noise
+    img = cv2.medianBlur(img, 3)
+    # Adaptive thresholding for uneven lighting
+    img = cv2.adaptiveThreshold(img, 255, 
+        cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 10)
+    # Morphological opening (erosion + dilation) to clean small noise
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2,2))
+    img = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+    # Gaussian blur + Otsu threshold to smooth edges
+    img = cv2.GaussianBlur(img, (5,5), 0)
+    _, img = cv2.threshold(img, 0, 255,
+                           cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    return img
+
 def extract_text_from_image(image_path):
-    img = Image.open(image_path)
-    text = pytesseract.image_to_string(img)
-    print(f"Extracted Text: {text}") 
+    processed = preprocess_image_opencv(image_path)
+    pil_img = Image.fromarray(processed)
+    config = r'--oem 1 --psm 6'  # LSTM OCR + single uniform block :contentReference[oaicite:1]{index=1}
+    text = pytesseract.image_to_string(pil_img, config=config)
+    print(f"Extracted Text: {text}")
     return text
 
 def save_image_data(image_name, text, date, category):
